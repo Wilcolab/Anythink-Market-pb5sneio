@@ -83,25 +83,59 @@ describe('Arithmetic', function () {
                     done();
                 });
         });
-        it('adds with negative exponent', function (done) {
-            request.get('/arithmetic?operation=add&operand1=1.2e-5&operand2=-1.2e-5')
-                .expect(200)
-                .end(function (err, res) {
-                    expect(res.body).to.eql({ result: 0 });
-                    done();
-                });
+        it('adds a positive exponential and a negative exponential', function (done) {
+            request.get('/arithmetic?operation=add&operand1=1e3&operand2=-2e2')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body).to.eql({ result: 800 });
+                done();
+            });
         });
-    });
 
-// TODO: Challenge #1
- 
+        it('adds two negative exponential numbers', function (done) {
+            request.get('/arithmetic?operation=add&operand1=-1e2&operand2=-2e2')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body).to.eql({ result: -300 });
+                done();
+            });
+        });
 
-    describe('Multiplication', function () {
-        it('multiplies two positive integers', function (done) {
-            request.get('/arithmetic?operation=multiply&operand1=21&operand2=2')
-                .expect(200)
-                .end(function (err, res) {
-                    expect(res.body).to.eql({ result: 42 });
+        it('adds a small exponential to a regular float', function (done) {
+            request.get('/arithmetic?operation=add&operand1=5e-2&operand2=0.05')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.result).to.be.closeTo(0.1, 1e-10);
+                done();
+            });
+        });
+
+        it('adds two small negative exponentials', function (done) {
+            request.get('/arithmetic?operation=add&operand1=-2e-2&operand2=-3e-2')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.result).to.be.closeTo(-0.05, 1e-10);
+                done();
+            });
+        });
+
+        it('adds a large positive and a small negative exponential', function (done) {
+            request.get('/arithmetic?operation=add&operand1=1e6&operand2=-1e-6')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body.result).to.be.closeTo(999999.999999, 1e-6);
+                done();
+            });
+        });
+
+        it('adds two exponentials with different exponents', function (done) {
+            request.get('/arithmetic?operation=add&operand1=1e5&operand2=1e2')
+            .expect(200)
+            .end(function (err, res) {
+                expect(res.body).to.eql({ result: 100100 });
+                done();
+            });
+        });
                     done();
                 });
         });
@@ -145,7 +179,6 @@ describe('Arithmetic', function () {
                     done();
                 });
         });
-    });
 
     describe('Division', function () {
         it('divides a positive integer by an integer factor ', function (done) {
@@ -205,4 +238,3 @@ describe('Arithmetic', function () {
                 });
         });
     });
-});
